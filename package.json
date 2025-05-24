@@ -1,0 +1,25 @@
+{
+	"name": "base",
+	"private": true,
+	"workspaces": [
+		"apps/*"
+	],
+	"scripts": {
+		"dev": "concurrently \"yarn workspace client dev\" \"yarn workspace api start:dev\"",
+		"dev:client": "yarn workspace client dev",
+		"dev:api": "yarn workspace api start:dev",
+		"pretty": "prettier --write .",
+		"test": "jest",
+		"test:backend": "cd apps/api && yarn test"
+	},
+	"devDependencies": {
+		"@nx/eslint-plugin": "^21.1.2",
+		"concurrently": "^8.0.1"
+	},
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "ar1m4k3y",
+	"jest": {
+		"testRegex": "apps/api/.*\\.spec\\.ts$"
+	}
+}

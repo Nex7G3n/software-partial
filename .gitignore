@@ -1,0 +1,55 @@
+# Node.js
+node_modules
+dist
+build
+.cache
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+.yarnrc.yml
+
+# Vite
+.client-temp
+.vite
+*.tsbuildinfo
+
+# NestJS
+api/.env
+api/.env.local
+api/node_modules
+api/dist
+
+# React + Vite
+client/node_modules
+client/dist
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.env
+
+# Output from tooling
+coverage/
+.eslintcache
+.prettiercache
+*.tgz
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional (build artifacts or test)
+*.out
+*.test.ts.snap
