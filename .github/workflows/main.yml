@@ -1,0 +1,46 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Lint API
+        run: yarn lint
+        working-directory: apps/api
+
+      - name: Build API
+        run: yarn build
+        working-directory: apps/api
+
+      - name: Test API
+        run: yarn test
+        working-directory: apps/api
+
+      - name: Lint Client
+        run: yarn lint
+        working-directory: apps/client
+
+      - name: Build Client
+        run: yarn build
+        working-directory: apps/client
