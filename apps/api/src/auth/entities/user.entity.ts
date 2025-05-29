@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from '../enums/role.enum';
 
 @Entity('users')
 export class UserEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -16,7 +16,7 @@ export class UserEntity {
   roles: Role[];
 
   @Column({ nullable: true })
-  googleId: string | null;
+  googleId: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -14,6 +14,6 @@ export class LogEntity {
   @Column({ nullable: true })
   context: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
 }

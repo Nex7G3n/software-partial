@@ -6,6 +6,8 @@ import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { TasksModule } from './tasks/tasks.module';
 import { Task } from './tasks/entities/task.entity';
 import { UserEntity } from './auth/entities/user.entity';
+import { LoggerModule } from './logger/logger.module';
+import { LogEntity } from './logger/entities/log.entity';
 
 @Module({
   imports: [
@@ -17,7 +19,7 @@ import { UserEntity } from './auth/entities/user.entity';
       username: process.env.DB_USER || 'default_user',
       password: process.env.DB_PASSWORD || 'default_password',
       database: process.env.DB_NAME || 'default_database',
-      entities: [RefreshToken, Task, UserEntity],
+      entities: [RefreshToken, Task, UserEntity, LogEntity],
       synchronize: true,
       logging: true,
       ssl: {
@@ -26,6 +28,7 @@ import { UserEntity } from './auth/entities/user.entity';
     }),
     AuthModule,
     TasksModule,
+    LoggerModule,
   ],
 })
 export class AppModule {}
