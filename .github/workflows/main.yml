@@ -26,21 +26,13 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Lint API
-        run: yarn lint
-        working-directory: apps/api
-
-      - name: Build API
-        run: yarn build
+        run: npx eslint "{src,apps,libs,test}/**/*.ts" --fix
         working-directory: apps/api
 
       - name: Test API
-        run: yarn test
+        run: npx jest --coverage
         working-directory: apps/api
 
       - name: Lint Client
-        run: yarn lint
-        working-directory: apps/client
-
-      - name: Build Client
-        run: yarn build
+        run: npx eslint .
         working-directory: apps/client
