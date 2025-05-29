@@ -1,4 +1,4 @@
-import { RouteConfig } from '../../types/routes.interface';
+import type { RouteConfig } from '../../types/routes.interface';
 import { protectedRoutes } from './protected.routes';
 import { publicRoutes } from './public.routes';
 

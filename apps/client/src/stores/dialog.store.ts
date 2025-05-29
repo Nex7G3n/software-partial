@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Task } from '../types/tasks.interface';
+import type { Task } from '../types/tasks.interface';
 
 interface DialogState {
 	isOpen: boolean;
@@ -13,7 +13,7 @@ export const useDialogStore = create<DialogState>((set) => ({
 	isOpen: false,
 	dialogMode: null,
 	currentTask: null,
-	openDialog: (mode, task = null) =>
+	openDialog: (mode, task: Task | null = null) =>
 		set({ isOpen: true, dialogMode: mode, currentTask: task }),
 	closeDialog: () =>
 		set({ isOpen: false, dialogMode: null, currentTask: null }),

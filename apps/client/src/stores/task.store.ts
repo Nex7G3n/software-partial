@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import {
+import type {
 	Task,
 	CreateTaskDto,
 	UpdateTaskDto,
@@ -7,6 +7,7 @@ import {
 } from '../types/tasks.interface';
 import { toast } from 'sonner';
 import { taskService } from '../services/task.service';
+import { AxiosError } from 'axios';
 
 interface TaskState {
 	tasks: Task[];
@@ -51,9 +52,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 		try {
 			const tasks = await taskService.getAll();
 			set({ tasks, filteredTasks: tasks });
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(`Error al cargar tareas: ${err.message}`);
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(`Error al cargar tareas: ${err.message}`);
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}
@@ -66,9 +72,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 		try {
 			const task = await taskService.getById(id, get().isAdminMode);
 			set({ selectedTask: task });
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(`Error al cargar tarea: ${err.message}`);
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(`Error al cargar tarea: ${err.message}`);
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}
@@ -111,13 +122,22 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 				}
 				return newTask;
 			})
-			.catch((err: any) => {
-				set({
-					tasks: prevTasks,
-					filteredTasks: prevFiltered,
-					error: err.message,
-				});
-				throw err;
+			.catch((err: unknown) => {
+				if (err instanceof AxiosError) {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						error: err.message,
+					});
+					throw err;
+				} else {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						error: 'An unknown error occurred',
+					});
+					throw new Error('An unknown error occurred');
+				}
 			});
 
 		toast.promise(promise, {
@@ -196,14 +216,24 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 				}
 				return updated;
 			})
-			.catch((err: any) => {
-				set({
-					tasks: prevTasks,
-					filteredTasks: prevFiltered,
-					selectedTask: prevSelected,
-					error: err.message,
-				});
-				throw err;
+			.catch((err: unknown) => {
+				if (err instanceof AxiosError) {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						selectedTask: prevSelected,
+						error: err.message,
+					});
+					throw err;
+				} else {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						selectedTask: prevSelected,
+						error: 'An unknown error occurred',
+					});
+					throw new Error('An unknown error occurred');
+				}
 			});
 
 		toast.promise(promise, {
@@ -233,14 +263,24 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 			.then(() => {
 				return { id };
 			})
-			.catch((err: any) => {
-				set({
-					tasks: prevTasks,
-					filteredTasks: prevFiltered,
-					selectedTask: prevSelected,
-					error: err.message,
-				});
-				throw err;
+			.catch((err: unknown) => {
+				if (err instanceof AxiosError) {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						selectedTask: prevSelected,
+						error: err.message,
+					});
+					throw err;
+				} else {
+					set({
+						tasks: prevTasks,
+						filteredTasks: prevFiltered,
+						selectedTask: prevSelected,
+						error: 'An unknown error occurred',
+					});
+					throw new Error('An unknown error occurred');
+				}
 			});
 
 		toast.promise(promise, {
@@ -284,11 +324,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 		try {
 			const tasks = await taskService.getAllAdmin();
 			set({ tasks, filteredTasks: tasks });
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(
-				`Error al cargar tareas de administrador: ${err.message}`,
-			);
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(
+					`Error al cargar tareas de administrador: ${err.message}`,
+				);
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}
@@ -299,11 +344,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 		try {
 			const task = await taskService.getById(id, true);
 			set({ selectedTask: task });
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(
-				`Error al cargar tarea de administrador: ${err.message}`,
-			);
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(
+					`Error al cargar tarea de administrador: ${err.message}`,
+				);
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}
@@ -330,10 +380,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 			const metrics = await taskService.getMetrics();
 			set({ metrics });
 			return metrics;
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(`Error al obtener métricas: ${err.message}`);
-			throw err;
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(`Error al obtener métricas: ${err.message}`);
+				throw err;
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+				throw new Error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}
@@ -345,12 +401,18 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 			const metrics = await taskService.getMetricsAdmin();
 			set({ metrics });
 			return metrics;
-		} catch (err: any) {
-			set({ error: err.message });
-			toast.error(
-				`Error al obtener métricas de administrador: ${err.message}`,
-			);
-			throw err;
+		} catch (err: unknown) {
+			if (err instanceof AxiosError) {
+				set({ error: err.message });
+				toast.error(
+					`Error al obtener métricas de administrador: ${err.message}`,
+				);
+				throw err;
+			} else {
+				set({ error: 'An unknown error occurred' });
+				toast.error('An unknown error occurred');
+				throw new Error('An unknown error occurred');
+			}
 		} finally {
 			set({ loadingFetch: false });
 		}

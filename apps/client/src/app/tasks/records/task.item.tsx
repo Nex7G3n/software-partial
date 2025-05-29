@@ -10,10 +10,11 @@ import { getPriorityColor } from '../../../utils/priority';
 import { getDueStatus } from '../../../utils/dates';
 import { TaskMenu } from './task.menu';
 import { useDialogStore } from '../../../stores/dialog.store';
+import type { Task } from '../../../types/tasks.interface'; // Import Task type
 
 interface TaskSortableItemProps {
-	task: any;
-	index: number;
+	task: Task; // Changed from any to Task
+	// index: number; // Removed: declared but its value is never read.
 	canEdit?: boolean;
 	canDelete?: boolean;
 	canView?: boolean;
@@ -22,7 +23,7 @@ interface TaskSortableItemProps {
 
 export function TaskSortableItem({
 	task,
-	index,
+	// index, // Removed: declared but its value is never read.
 	canEdit = true,
 	canDelete = true,
 	canView = true,
@@ -46,7 +47,7 @@ export function TaskSortableItem({
 		opacity: isDragging ? 0.6 : 1,
 	};
 
-	const dueStatus = getDueStatus(task.dueDate);
+	const dueStatus = getDueStatus(task.dueDate || ''); // Handle undefined
 	const priorityClass = getPriorityColor(task.priority);
 	const completedClass = task.completed ? 'border-l-4 border-green-500' : '';
 

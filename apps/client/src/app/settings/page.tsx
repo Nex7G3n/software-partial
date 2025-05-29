@@ -6,7 +6,7 @@ import {
 	HiOutlineKey,
 } from 'react-icons/hi';
 import { useUserStore } from '../../stores/user.store';
-import { IconType } from 'react-icons/lib';
+import type { IconType } from 'react-icons/lib';
 
 const InfoCard = ({
 	icon: Icon,
@@ -67,7 +67,7 @@ export default function UserConfigPage() {
 						<span className="font-semibold">Roles:</span>
 					</div>
 					<div className="flex flex-wrap gap-2 ml-7">
-						{user.roles.map((role) => (
+						{user.roles?.map((role) => (
 							<span
 								key={role}
 								className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs border border-gray-300"
@@ -85,7 +85,7 @@ export default function UserConfigPage() {
 						<span className="font-semibold">Permisos:</span>
 					</div>
 					<div className="flex flex-wrap gap-2 ml-7">
-						{user.permissions.map((perm) => (
+						{user.permissions?.map((perm) => (
 							<span
 								key={perm}
 								className="text-xs px-2 py-1 bg-gray-50 border border-gray-200 rounded"

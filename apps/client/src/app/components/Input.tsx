@@ -1,10 +1,11 @@
 import React from 'react';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 
 type InputVariant = 'primary' | 'outline' | 'secondary';
 
 interface BaseProps {
 	id: string;
-	register?: (name: string) => Record<string, unknown>;
+	register?: UseFormRegisterReturn;
 	className?: string;
 	variant?: InputVariant;
 }
@@ -41,7 +42,7 @@ const Input: React.FC<Props> = ({
 }) => {
 	const commonProps = {
 		id,
-		...(register ? register(id) : {}),
+		...(register || {}), // Directly spread register if it's UseFormRegisterReturn
 		className: `${baseClasses} ${variantClasses[variant]} mt-1 ${className}`,
 		...rest,
 	};

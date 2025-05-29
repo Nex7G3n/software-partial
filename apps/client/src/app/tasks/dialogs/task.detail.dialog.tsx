@@ -1,5 +1,6 @@
 import { Button } from '../../components/Button';
-import { Task, TaskStatus } from '../../../types/tasks.interface';
+import { TaskStatus } from '../../../types/tasks.interface';
+import type { Task } from '../../../types/tasks.interface';
 import { useDialogStore } from '../../../stores/dialog.store';
 
 type TaskDetailContentProps = {

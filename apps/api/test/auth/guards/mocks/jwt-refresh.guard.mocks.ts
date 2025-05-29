@@ -10,7 +10,7 @@ export const mockUserFromAuthService: UserEntity = {
   email: 'refreshed@example.com',
   name: 'Refreshed User',
   roles: [Role.USER],
-  googleId: null,
+  googleId: '',
   createdAt: new Date(),
   updatedAt: new Date(),
 };

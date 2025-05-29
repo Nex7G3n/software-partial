@@ -2,7 +2,7 @@ import Input from '../../components/Input';
 import { Button } from '../../components/Button';
 import { useDialogStore } from '../../../stores/dialog.store';
 import { useForm } from 'react-hook-form';
-import {
+import type {
 	CreateTaskDto,
 	Task,
 	UpdateTaskDto,
@@ -33,7 +33,7 @@ export function TaskEditContent({ mode }: TaskEditContentProps) {
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-		defaultValues: isCreate ? {} : currentTask,
+		defaultValues: isCreate ? {} : currentTask || {},
 	});
 
 	return (
@@ -42,10 +42,10 @@ export function TaskEditContent({ mode }: TaskEditContentProps) {
 				<label htmlFor="title" className="block text-sm font-medium">
 					Título
 				</label>
-				<Input id="title" register={register} variant="primary" />
+				<Input id="title" {...register('title')} variant="primary" />
 				{errors.title && (
 					<p className="text-sm text-red-500 mt-1">
-						{errors.title.message}
+						{errors.title?.message}
 					</p>
 				)}
 			</div>
@@ -59,14 +59,14 @@ export function TaskEditContent({ mode }: TaskEditContentProps) {
 				</label>
 				<Input
 					id="description"
-					register={register}
+					{...register('description')}
 					variant="primary"
 					as="textarea"
 					rows={3}
 				/>
 				{errors.description && (
 					<p className="text-sm text-red-500 mt-1">
-						{errors.description.message}
+						{errors.description?.message}
 					</p>
 				)}
 			</div>

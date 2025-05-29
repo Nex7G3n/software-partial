@@ -1,7 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useTaskStore } from '../../stores/task.store';
 import { TaskSortableSkeleton } from './records/task.skeleton';
 import { Button } from '../components/Button';
@@ -11,14 +8,6 @@ import { useUserStore } from '../../stores/user.store';
 import { Permission } from '../../types/permission.enum';
 import { TaskList } from './records/task.list';
 import { useDialogStore } from '../../stores/dialog.store';
-
-// Form validation schema
-const schema = z.object({
-	title: z.string().min(1, 'Título es obligatorio'),
-	description: z.string().min(1, 'Descripción es obligatoria'),
-});
-
-type FormData = z.infer<typeof schema>;
 
 interface TasksPageProps {
 	isAdmin?: boolean;
@@ -38,12 +27,12 @@ export default function TasksPage({ isAdmin = false }: TasksPageProps) {
 	} = useTaskStore();
 	const { openDialog } = useDialogStore();
 
-	const {
-		setFocus,
-		formState: { errors },
-	} = useForm<FormData>({ resolver: zodResolver(schema) });
+	// const { // Removed: setFocus and errors are declared but their values are never read.
+	// 	setFocus,
+	// 	formState: { errors },
+	// } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-	const [isOpen, setIsOpen] = useState(false);
+	// const [isOpen, setIsOpen] = useState(false); // Removed: declared but its value is never read.
 	const [order, setOrder] = useState<string[]>([]);
 
 	// Check user permissions

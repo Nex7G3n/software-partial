@@ -1,5 +1,5 @@
 import api from '../lib/axios';
-import {
+import type {
 	Task,
 	CreateTaskDto,
 	UpdateTaskDto,

@@ -1,11 +1,10 @@
-import { NavItem } from '../types/menu.interface';
+import type { NavItem } from '../types/menu.interface';
 import { Permission } from '../types/permission.enum';
 import {
 	HiOutlineChartBar,
 	HiOutlineClipboardList,
 	HiOutlineDocumentText,
 	HiOutlineCog,
-	HiOutlineUsers,
 } from 'react-icons/hi';
 
 const navItems: NavItem[] = [

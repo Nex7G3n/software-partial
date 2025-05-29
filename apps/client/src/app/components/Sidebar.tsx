@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
 	const filteredNavItems = navItems.filter(
 		(item) =>
 			!item.requiredPermission ||
-			user.permissions.includes(item.requiredPermission),
+			user.permissions!.includes(item.requiredPermission),
 	);
 
 	const handleLogout = () => {

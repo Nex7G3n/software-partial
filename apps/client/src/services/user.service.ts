@@ -1,5 +1,5 @@
 import api from '../lib/axios';
-import { User } from '../types/user.interface';
+import type { User } from '../types/user.interface';
 
 export const userService = {
 	async getCurrentUser(): Promise<User> {

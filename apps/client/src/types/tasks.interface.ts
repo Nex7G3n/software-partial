@@ -1,8 +1,10 @@
-export enum TaskStatus {
-	PENDING = 'PENDING',
-	IN_PROGRESS = 'IN_PROGRESS',
-	COMPLETED = 'COMPLETED',
-}
+export const TaskStatus = {
+	PENDING: 'PENDING',
+	IN_PROGRESS: 'IN_PROGRESS',
+	COMPLETED: 'COMPLETED',
+} as const;
+
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
 
 export interface Task {
 	id: string;
@@ -12,6 +14,11 @@ export interface Task {
 	userId: string;
 	createdAt: Date;
 	updatedAt: Date;
+	dueDate?: string; // Assuming it's a string from the backend, can be Date if parsed
+	priority?: string;
+	completed?: boolean;
+	tags?: string[];
+	assignedTo?: string;
 }
 
 export interface CreateTaskDto {
@@ -20,34 +27,29 @@ export interface CreateTaskDto {
 	status?: TaskStatus;
 }
 
-export type UpdateTaskDto = Partial<CreateTaskDto>;
-
-export interface TaskState {
-	tasks: Task[];
-	selectedTask: Task | null;
-	loadingFetch: boolean;
-	error: string | null;
-	searchTerm: string;
-	filteredTasks: Task[];
-
-	fetchTasks: () => Promise<void>;
-	selectTask: (task: Task | null) => void;
-	fetchTaskById: (id: string) => Promise<void>;
-	createTask: (data: CreateTaskDto) => Promise<void>;
-	updateTask: (id: string, data: UpdateTaskDto) => Promise<void>;
-	deleteTask: (id: string) => Promise<void>;
-	setSearchTerm: (term: string) => void;
-	fetchAdminTasks: () => Promise<void>;
-	resetError: () => void;
-	logout: () => Promise<void>;
-	saveAccessTokenFromUrl: () => Promise<void>;
+export interface UpdateTaskDto {
+	title?: string;
+	description?: string;
+	status?: TaskStatus;
 }
 
 export interface TaskMetricsDto {
 	totalTasks: number;
-	completedTasks: number;
-	pendingTasks: number;
-	tasksByDate: { date: string; count: number }[];
-	tasksByStatus: { status: string; count: number }[];
-	tasksByUser?: { user: string; count: number }[];
+	tasksByStatus: {
+		status: TaskStatus;
+		count: number;
+	}[];
+	tasksByPriority: {
+		priority: string; // Assuming priority is a string, adjust if it's an enum
+		count: number;
+	}[];
+	tasksByUser: {
+		userId: string;
+		userName: string;
+		count: number;
+	}[];
+	timeline: {
+		date: string;
+		count: number;
+	}[];
 }

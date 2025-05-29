@@ -22,7 +22,11 @@ export function TaskDeleteContent() {
 				Cancelar
 			</Button>
 			<Button
-				onClick={() => handleDelete(currentTask?.id)}
+				onClick={() => {
+					if (currentTask?.id) {
+						handleDelete(currentTask.id);
+					}
+				}}
 				variant="primary"
 				className="bg-red-600 hover:bg-red-700 text-white"
 			>

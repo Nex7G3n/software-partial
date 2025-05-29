@@ -1,9 +1,9 @@
-export const getDueStatus = (dueDateStr) => {
+export const getDueStatus = (dueDateStr: string) => { // Add type annotation
 	if (!dueDateStr) return null;
 
 	const dueDate = new Date(dueDateStr);
 	const today = new Date();
-	const diffTime = dueDate - today;
+	const diffTime = dueDate.getTime() - today.getTime(); // Use getTime() for arithmetic
 	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
 	if (diffDays < 0) {

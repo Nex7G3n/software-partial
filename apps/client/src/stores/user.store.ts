@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { toast } from 'sonner';
-import { NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction } from 'react-router-dom';
+import type { User, UserState } from '../types/user.interface';
 import { userService } from '../services/user.service';
-import { User, UserState } from '../types/user.interface';
+import { AxiosError } from 'axios';
 
 const initialState: Pick<UserState, 'user' | 'token' | 'loading'> = {
 	user: null,
@@ -50,11 +51,18 @@ export const useUserStore = create<UserState>()(
 					set({ user });
 					toast.success('Sesión iniciada correctamente');
 					navigate('/dashboard');
-				} catch (error: any) {
-					console.error('Error al validar token', error);
-					set({ token: null, user: null });
-					toast.error('Error de autenticación. Redirigiendo...');
-					navigate('/');
+				} catch (error: unknown) {
+					if (error instanceof AxiosError) {
+						console.error('Error al validar token', error);
+						set({ token: null, user: null });
+						toast.error('Error de autenticación. Redirigiendo...');
+						navigate('/');
+					} else {
+						console.error('An unknown error occurred', error);
+						set({ token: null, user: null });
+						toast.error('An unknown error occurred. Redirigiendo...');
+						navigate('/');
+					}
 				}
 			},
 
@@ -76,11 +84,18 @@ export const useUserStore = create<UserState>()(
 					set({ user, loading: false });
 					toast.success('Bienvenido de nuevo');
 					navigate('/dashboard');
-				} catch (error) {
-					console.error('Authentication error:', error);
-					set({ user: null, loading: false });
-					toast.error('Error de autenticación. Redirigiendo...');
-					navigate('/');
+				} catch (error: unknown) {
+					if (error instanceof AxiosError) {
+						console.error('Authentication error:', error);
+						set({ user: null, loading: false });
+						toast.error('Error de autenticación. Redirigiendo...');
+						navigate('/');
+					} else {
+						console.error('An unknown error occurred:', error);
+						set({ user: null, loading: false });
+						toast.error('An unknown error occurred. Redirigiendo...');
+						navigate('/');
+					}
 				}
 			},
 
@@ -90,9 +105,14 @@ export const useUserStore = create<UserState>()(
 					set({ token: null, user: null });
 					toast.success('Sesión cerrada correctamente');
 					navigate('/');
-				} catch (error) {
-					console.error('Logout failed', error);
-					toast.error('No se pudo cerrar sesión');
+				} catch (error: unknown) {
+					if (error instanceof AxiosError) {
+						console.error('Logout failed', error);
+						toast.error('No se pudo cerrar sesión');
+					} else {
+						console.error('An unknown error occurred', error);
+						toast.error('An unknown error occurred');
+					}
 				}
 			},
 		}),

@@ -4,8 +4,8 @@ import {
 	useSensor,
 	useSensors,
 	PointerSensor,
-	DragEndEvent,
 } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import {
 	SortableContext,
 	verticalListSortingStrategy,
@@ -56,11 +56,11 @@ export function TaskList({
 	if (!isDraggable) {
 		return (
 			<div className="space-y-4">
-				{ordered.map((task, i) => (
+				{ordered.map((task) => ( // Removed 'i'
 					<TaskSortableItem
 						key={task.id}
 						task={task}
-						index={i}
+						// index={i} // Removed: no longer needed
 						canEdit={canEdit}
 						canDelete={canDelete}
 						canView={canView}
@@ -83,11 +83,11 @@ export function TaskList({
 				strategy={verticalListSortingStrategy}
 			>
 				<div className="space-y-4">
-					{ordered.map((task, i) => (
+					{ordered.map((task) => ( // Removed 'i'
 						<TaskSortableItem
 							key={task.id}
 							task={task}
-							index={i}
+							// index={i} // Removed: no longer needed
 							canEdit={canEdit}
 							canDelete={canDelete}
 							canView={canView}

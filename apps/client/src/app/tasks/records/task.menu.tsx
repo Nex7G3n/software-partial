@@ -16,7 +16,8 @@ import {
 import { Fragment } from 'react';
 import { useTaskStore } from '../../../stores/task.store';
 import { useDialogStore } from '../../../stores/dialog.store';
-import { Task, TaskStatus } from '../../../types/tasks.interface';
+import { TaskStatus } from '../../../types/tasks.interface';
+import type { Task } from '../../../types/tasks.interface';
 
 interface TaskMenuProps {
 	task: Task;

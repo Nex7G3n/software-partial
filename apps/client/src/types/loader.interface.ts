@@ -1,4 +1,4 @@
-import { User } from './user.interface';
+import type { User } from './user.interface';
 
 export type LoaderData = {
 	token: string;

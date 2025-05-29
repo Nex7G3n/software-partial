@@ -1,4 +1,4 @@
-import { RouteConfig } from '../../types/routes.interface';
+import type { RouteConfig } from '../../types/routes.interface';
 import CallbackPage from '../auth/callback/page';
 import LoginPage from '../auth/login/page';
 import LogoutPage from '../auth/logout/LogoutPage';

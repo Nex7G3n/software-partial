@@ -1,4 +1,4 @@
-import { RouteConfig } from '../../types/routes.interface';
+import type { RouteConfig } from '../../types/routes.interface';
 import AuthGuard from '../guards/AuthGuard';
 import DashboardLayout from '../layouts/dashboard.layout';
 import Dashboard from '../metrics/Dashboard';

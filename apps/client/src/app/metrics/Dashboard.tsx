@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Chart as ChartJS,
 	ArcElement,
@@ -10,10 +10,12 @@ import {
 	LineElement,
 	BarElement,
 } from 'chart.js';
+import type { ChartOptions } from 'chart.js'; // Import ChartOptions as a type
 import { Pie, Line, Bar } from 'react-chartjs-2';
 import { useUserStore } from '../../stores/user.store';
 import { useTaskStore } from '../../stores/task.store';
 import { Permission } from '../../types/permission.enum';
+import { TaskStatus } from '../../types/tasks.interface'; // Import TaskStatus
 import DashboardSkeleton from './dashboard.skeleton';
 
 ChartJS.register(
@@ -42,7 +44,7 @@ const Dashboard = () => {
 	const isAdmin = user?.permissions?.includes(Permission.TASK_READ_ANY_LIST);
 	const { metrics, fetchMetrics, fetchMetricsAdmin } = useTaskStore();
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -143,7 +145,7 @@ const Dashboard = () => {
 	};
 
 	const timelineChartData = {
-		labels: metrics.tasksByDate.map((item) => {
+		labels: metrics.timeline.map((item: { date: string; count: number }) => {
 			// Formato más legible para fechas
 			const date = new Date(item.date);
 			return date.toLocaleDateString('es-ES', {
@@ -154,7 +156,7 @@ const Dashboard = () => {
 		datasets: [
 			{
 				label: 'Tareas Creadas',
-				data: metrics.tasksByDate.map((item) => item.count),
+				data: metrics.timeline.map((item: { date: string; count: number }) => item.count),
 				borderColor: chartColors.green,
 				backgroundColor: chartColors.green.replace('0.8', '0.2'),
 				tension: 0.3,
@@ -169,7 +171,7 @@ const Dashboard = () => {
 		maintainAspectRatio: false,
 		plugins: {
 			legend: {
-				position: 'bottom',
+				position: 'bottom' as const, // Explicitly cast to literal type
 				labels: {
 					padding: 20,
 					usePointStyle: true,
@@ -183,7 +185,7 @@ const Dashboard = () => {
 				padding: 12,
 				titleFont: {
 					size: 14,
-					weight: 'bold',
+					weight: 'bold' as const, // Explicitly cast to literal type
 				},
 				bodyFont: {
 					size: 13,
@@ -216,7 +218,7 @@ const Dashboard = () => {
 	const userChartData =
 		isAdmin && metrics.tasksByUser
 			? {
-					labels: metrics.tasksByUser.map((item) => item.user),
+					labels: metrics.tasksByUser.map((item) => item.userName),
 					datasets: [
 						{
 							label: 'Tareas por Usuario',
@@ -232,9 +234,17 @@ const Dashboard = () => {
 			: null;
 
 	// Calcular porcentajes para mostrar información más valiosa
+	const completedTasksCount =
+		metrics.tasksByStatus.find(
+			(s) => s.status === TaskStatus.COMPLETED,
+		)?.count || 0;
+	const pendingTasksCount =
+		metrics.tasksByStatus.find((s) => s.status === TaskStatus.PENDING)
+			?.count || 0;
+
 	const completionPercentage =
 		metrics.totalTasks > 0
-			? Math.round((metrics.completedTasks / metrics.totalTasks) * 100)
+			? Math.round((completedTasksCount / metrics.totalTasks) * 100)
 			: 0;
 
 	return (
@@ -268,7 +278,7 @@ const Dashboard = () => {
 					</h2>
 					<div className="flex items-center">
 						<p className="text-2xl font-bold mt-1">
-							{metrics.completedTasks}
+							{completedTasksCount}
 						</p>
 						<span className="ml-2 text-sm text-green-600">
 							{completionPercentage}%
@@ -281,7 +291,7 @@ const Dashboard = () => {
 						Tareas Pendientes
 					</h2>
 					<p className="text-2xl font-bold mt-1">
-						{metrics.pendingTasks}
+						{pendingTasksCount}
 					</p>
 				</div>
 
@@ -290,10 +300,9 @@ const Dashboard = () => {
 						Actividad Reciente
 					</h2>
 					<p className="text-2xl font-bold mt-1">
-						{metrics.tasksByDate.length > 0
-							? metrics.tasksByDate[
-									metrics.tasksByDate.length - 1
-								].count
+						{metrics.timeline.length > 0
+							? metrics.timeline[metrics.timeline.length - 1]
+									.count
 							: 0}
 					</p>
 				</div>
@@ -322,7 +331,7 @@ const Dashboard = () => {
 											label: function (context) {
 												const label =
 													context.label || '';
-												const value = context.raw || 0;
+												const value = context.raw as number || 0; // Explicitly cast to number
 												const total =
 													context.dataset.data.reduce(
 														(a, b) => a + b,
@@ -362,7 +371,7 @@ const Dashboard = () => {
 						className="h-64"
 						aria-describedby="timeline-chart-title"
 					>
-						<Line data={timelineChartData} options={lineOptions} />
+						<Line data={timelineChartData} options={lineOptions as ChartOptions<'line'>} />
 					</div>
 					<div className="sr-only" role="status" aria-live="polite">
 						Gráfico de tendencia de creación de tareas a lo largo
@@ -386,7 +395,7 @@ const Dashboard = () => {
 							options={{
 								...commonOptions,
 								indexAxis:
-									metrics.tasksByUser.length > 8 ? 'y' : 'x',
+									metrics.tasksByUser?.length > 8 ? 'y' : 'x',
 								scales: {
 									y: {
 										beginAtZero: true,
@@ -395,7 +404,7 @@ const Dashboard = () => {
 										},
 									},
 								},
-							}}
+							} as ChartOptions<'bar'>}
 						/>
 					</div>
 					<div className="sr-only" role="status" aria-live="polite">
@@ -404,7 +413,7 @@ const Dashboard = () => {
 							metrics.tasksByUser
 								.map(
 									(item) =>
-										`${item.user}: ${item.count} tareas. `,
+										`${item.userName}: ${item.count} tareas. `,
 								)
 								.join('')}
 					</div>
