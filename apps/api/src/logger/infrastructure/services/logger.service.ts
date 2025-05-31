@@ -17,7 +17,7 @@ export class LoggerService extends Logger {
 		super.log(message, context);
 	}
 
-	error(message: unknown, trace?: string, context?: string, data?: unknown) {
+	error(message: unknown, trace?: unknown, context?: string, data?: unknown) {
 		void this.saveLog('error', message, context, data);
 		super.error(message, trace, context);
 	}

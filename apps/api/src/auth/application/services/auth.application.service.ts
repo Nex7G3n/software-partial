@@ -98,7 +98,7 @@ export class AuthApplicationService implements IAuthService {
 			await queryRunner.rollbackTransaction();
 			this.logger.error(
 				'Error processing Google user',
-				undefined,
+				error instanceof Error ? error.message : String(error),
 				undefined,
 				{
 					error,
@@ -136,7 +136,7 @@ export class AuthApplicationService implements IAuthService {
 		} catch (error) {
 			this.logger.error(
 				`Error generating access token for user ${user.id}`,
-				error,
+				error instanceof Error ? error.message : String(error),
 			);
 			throw new InternalServerErrorException(
 				'Failed to generate access token',
@@ -181,7 +181,7 @@ export class AuthApplicationService implements IAuthService {
 			await queryRunner.rollbackTransaction();
 			this.logger.error(
 				`Error generating refresh token for user ${user.id}`,
-				error,
+				error instanceof Error ? error.message : String(error),
 			);
 			throw new InternalServerErrorException(
 				'Failed to generate refresh token',
@@ -244,7 +244,12 @@ export class AuthApplicationService implements IAuthService {
 			}
 			this.logger.error(
 				'Error validating refresh token',
-				error instanceof Error ? error.message : 'Unknown error',
+				undefined,
+				undefined,
+				{
+					originalError:
+						error instanceof Error ? error.message : String(error),
+				},
 			);
 			throw new InternalServerErrorException(
 				'Failed to validate refresh token',
@@ -371,7 +376,10 @@ export class AuthApplicationService implements IAuthService {
 			this.logger.debug(`User with ID: ${userId} found`);
 			return user;
 		} catch (error) {
-			this.logger.error(`Error finding user by ID: ${userId}`, error);
+			this.logger.error(
+				`Error finding user by ID: ${userId}`,
+				error instanceof Error ? error.message : String(error),
+			);
 			throw new InternalServerErrorException('Error accessing user data');
 		}
 	}
@@ -386,7 +394,10 @@ export class AuthApplicationService implements IAuthService {
 				`Cleaned up ${result.affected} expired refresh tokens`,
 			);
 		} catch (error) {
-			this.logger.error('Error cleaning up expired tokens', error);
+			this.logger.error(
+				'Error cleaning up expired tokens',
+				error instanceof Error ? error.message : String(error),
+			);
 		}
 	}
 }
