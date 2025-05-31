@@ -1,12 +1,12 @@
-// src/auth/guards/jwt-refresh.guard.spec.ts
+// src/auth/infrastructure/guards/__tests__/jwt-refresh.guard.spec.ts
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport'; // Add this import
+import { AuthGuard } from '@nestjs/passport';
 import {
 	MOCK_VALID_REFRESH_TOKEN,
 	mockUserFromAuthService,
 	mockRequestWithRefreshToken,
 	mockRequestWithoutRefreshToken,
-} from './mocks/jwt-refresh.guard.mocks'; // MOCK_INVALID_REFRESH_TOKEN is no longer needed
+} from '../../__mocks__/jwt-refresh.guard.mocks';
 import { JwtRefreshGuard } from 'src/auth/infrastructure/guards/refresh.guard';
 
 describe('JwtRefreshGuard', () => {

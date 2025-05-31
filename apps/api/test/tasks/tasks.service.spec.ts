@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TasksService } from '../../src/tasks/tasks.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Task } from '../../src/tasks/entities/task.entity';
-import { CreateTaskDto } from '../../src/tasks/dto/create-task.dto';
-import { TaskStatus } from '../../src/tasks/enum/tasks.enum';
 import { NotFoundException } from '@nestjs/common';
+import { Task } from 'src/tasks/domain/entities/task.entity';
+import { TasksApplicationService } from 'src/tasks/application/services/tasks.application.service';
+import { TaskStatus } from 'src/tasks/domain/enums/tasks.enum';
+import { CreateTaskDto } from 'src/tasks/application/dtos/create-task.dto';
 
-describe('TasksService', () => {
-	let service: TasksService;
+describe('TasksApplicationService', () => {
+	let service: TasksApplicationService;
 	let tasksRepository: Repository<Task>;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				TasksService,
+				TasksApplicationService,
 				{
 					provide: getRepositoryToken(Task),
 					useClass: Repository, // Use a mock repository class or object
@@ -22,7 +22,7 @@ describe('TasksService', () => {
 			],
 		}).compile();
 
-		service = module.get<TasksService>(TasksService);
+		service = module.get<TasksApplicationService>(TasksApplicationService);
 		tasksRepository = module.get<Repository<Task>>(
 			getRepositoryToken(Task),
 		);

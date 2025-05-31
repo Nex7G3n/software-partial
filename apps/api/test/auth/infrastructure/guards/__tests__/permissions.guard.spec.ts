@@ -1,16 +1,15 @@
-// src/auth/guards/permissions.guard.spec.ts
+// src/auth/infrastructure/guards/__tests__/permissions.guard.spec.ts
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import {
-	// MOCK_PERMISSIONS_KEY is no longer needed if importing the actual key
 	mockUserAdmin,
 	mockUserEditor,
 	mockUserRegular,
 	mockUserGuest,
 	mockUserNoRoles,
 	mockUserMultipleRoles,
-} from './mocks/permissions.guard.mocks'; // Adjust path
+} from '../../__mocks__/permissions.guard.mocks';
 import { User } from 'src/common/types/user.interface';
 import { PERMISSIONS_KEY } from 'src/auth/infrastructure/decorators/permissions.decorator';
 import { Permission } from 'src/auth/domain/enums/permission.enum';

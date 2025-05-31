@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
-import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
 import { JwtPayload } from 'src/common/types/jwt-payload.interface';
 import { mockConfigService } from './mocks/jwt.strategy.mocks';
+import { JwtStrategy } from 'src/auth/infrastructure/strategies/jwt.strategy';
 
 describe('JwtStrategy', () => {
 	let strategy: JwtStrategy;
