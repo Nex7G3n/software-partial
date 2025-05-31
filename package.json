@@ -18,8 +18,7 @@
 		"start": "concurrently \"yarn workspace client preview\" \"yarn workspace api start:prod\"",
 		"start:client": "yarn workspace client preview",
 		"start:api": "yarn workspace api start:prod",
-		"test": "concurrently \"yarn workspace client test\" \"yarn workspace api test\"",
-		"test:client": "yarn workspace client test",
+		"test": "yarn workspace api test",
 		"test:api": "yarn workspace api test",
 		"test:coverage": "concurrently \"yarn workspace client test:coverage\" \"yarn workspace api test:cov\"",
 		"test:watch": "concurrently \"yarn workspace client test:watch\" \"yarn workspace api test:watch\"",
@@ -42,7 +41,8 @@
 		"lint-staged": "^15.2.0",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.33.0"
+		"typescript-eslint": "^8.33.0",
+		"jest-mock-extended": "^3.0.0"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [

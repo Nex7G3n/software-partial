@@ -52,9 +52,13 @@ describe('GoogleStrategy', () => {
 		});
 
 		it('should throw an error if emails array is undefined', () => {
-			const invalidProfile: any = {
-				...mockProfile,
-				emails: undefined,
+			const invalidProfile: Partial<Profile> = {
+				id: mockProfile.id,
+				displayName: mockProfile.displayName,
+				photos: mockProfile.photos,
+				provider: mockProfile.provider,
+				_raw: mockProfile._raw,
+				_json: mockProfile._json,
 			};
 
 			expect(() =>
@@ -67,7 +71,7 @@ describe('GoogleStrategy', () => {
 		});
 
 		it('should handle missing displayName by returning empty string for name', () => {
-			const profileNoName: any = {
+			const profileNoName: Profile = {
 				...mockProfile,
 				displayName: undefined,
 			};

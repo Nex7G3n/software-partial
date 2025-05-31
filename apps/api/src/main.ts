@@ -45,4 +45,7 @@ async function bootstrap() {
 	console.log(`\n👉 API URL: http://localhost:${port}/${globalPrefix}\n`);
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+	Logger.error('Failed to start application', error);
+	process.exit(1);
+});

@@ -41,7 +41,7 @@ describe('JwtStrategy', () => {
 		});
 
 		it('should return user object with empty roles array when roles is not an array', () => {
-			const payload: any = {
+			const payload: Partial<JwtPayload> & { roles: unknown } = {
 				sub: 'user-id',
 				email: 'test@example.com',
 				name: 'Test User',
@@ -58,7 +58,7 @@ describe('JwtStrategy', () => {
 		});
 
 		it('should return user object with empty roles array when roles is undefined', () => {
-			const payload: any = {
+			const payload: Partial<JwtPayload> = {
 				sub: 'user-id',
 				email: 'test@example.com',
 				name: 'Test User',

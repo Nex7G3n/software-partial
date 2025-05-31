@@ -8,6 +8,8 @@ import {
 	InternalServerErrorException,
 } from '@nestjs/common';
 
+import { mock } from 'jest-mock-extended';
+
 import { mockJwtService } from './mocks/jwt.service.mock';
 import { mockConfigService } from './mocks/config.service.mock';
 import { mockRepository, MockRepositoryType } from './mocks/repository.mock';
@@ -25,9 +27,9 @@ type MockRepository<T extends object = any> = MockRepositoryType<T>;
 describe('AuthService', () => {
 	let service: AuthApplicationService;
 	let jwtService: JwtService;
-	let refreshTokenRepository: MockRepository<RefreshToken>;
-	let userRepository: MockRepository<UserEntity>;
-	let loggerService: LoggerService;
+	let refreshTokenRepository: jest.Mocked<MockRepository<RefreshToken>>;
+	let userRepository: jest.Mocked<MockRepository<UserEntity>>;
+	let loggerService: jest.Mocked<LoggerService>;
 
 	const mockUser: UserEntity = {
 		id: 'user-id-1',
@@ -66,13 +68,17 @@ describe('AuthService', () => {
 
 		service = module.get<AuthApplicationService>(AuthApplicationService);
 		jwtService = module.get<JwtService>(JwtService);
-		refreshTokenRepository = module.get<MockRepository<RefreshToken>>(
-			getRepositoryToken(RefreshToken),
+		refreshTokenRepository = mock(
+			module.get<MockRepository<RefreshToken>>(
+				getRepositoryToken(RefreshToken),
+			),
 		);
-		userRepository = module.get<MockRepository<UserEntity>>(
-			getRepositoryToken(UserEntity),
+		userRepository = mock(
+			module.get<MockRepository<UserEntity>>(
+				getRepositoryToken(UserEntity),
+			),
 		);
-		loggerService = module.get<LoggerService>(LoggerService);
+		loggerService = mock(module.get<LoggerService>(LoggerService));
 
 		// Reset mocks before each test
 		jest.clearAllMocks();
@@ -178,29 +184,27 @@ describe('AuthService', () => {
 
 		it('should throw UnauthorizedException if user data is invalid', () => {
 			// Mock loggerService.error to do nothing
-			const originalLoggerError = loggerService.error;
-			loggerService.error = jest.fn();
+			const originalLoggerError = jest.fn();
+			loggerService.error = originalLoggerError;
 
-			try {
-				expect(() =>
-					service.generateAccessToken({
-						id: null,
-					} as unknown as UserEntity),
-				).toThrow(UnauthorizedException);
-			} finally {
-				// Restore original loggerService.error
-				loggerService.error = originalLoggerError;
-			}
+			expect(() => {
+				return service.generateAccessToken({
+					id: null,
+				} as unknown as UserEntity);
+			}).toThrow(UnauthorizedException);
 		});
 	});
 
 	describe('generateRefreshToken', () => {
 		it('should generate and save a refresh token', async () => {
-			mockQueryRunner.manager.create.mockImplementation((_, props) => ({
-				...props,
-				id: 'refresh-token-id',
-			}));
-			mockQueryRunner.manager.save.mockResolvedValue({
+			const manager = mockQueryRunner.manager;
+			manager.create.mockImplementation((_entityClass, plainObject) => {
+				return {
+					...plainObject,
+					id: 'refresh-token-id',
+				} as RefreshToken;
+			});
+			manager.save.mockResolvedValue({
 				id: 'refresh-token-id',
 			} as RefreshToken);
 
@@ -225,9 +229,8 @@ describe('AuthService', () => {
 		});
 
 		it('should rollback transaction on error during refresh token generation', async () => {
-			mockQueryRunner.manager.save.mockRejectedValue(
-				new Error('DB error'),
-			);
+			const manager = mockQueryRunner.manager;
+			manager.save.mockRejectedValue(new Error('DB error'));
 			await expect(
 				service.generateRefreshToken(mockUser),
 			).rejects.toThrow(InternalServerErrorException);
@@ -348,7 +351,7 @@ describe('AuthService', () => {
 				{ revoked: true, revokedAt: expect.any(Date) },
 			);
 			expect(loggerService.log).toHaveBeenCalledWith(
-				`Revoked 3 refresh tokens for user: ${mockUser.id}`, // Hardcoded expected affected count based on mockResolvedValue
+				`Revoked 3 refresh tokens for user: ${mockUser.id}`,
 			);
 		});
 	});
@@ -360,16 +363,19 @@ describe('AuthService', () => {
 
 		beforeEach(() => {
 			// Mock validateRefreshToken to succeed for this test block
-			jest.spyOn(service, 'validateRefreshToken').mockResolvedValue(
-				mockUser,
-			);
+			jest.spyOn(
+				service,
+				'validateRefreshToken' as any,
+			).mockImplementation(() => Promise.resolve(mockUser));
+
 			// Mock generateAccessToken
-			jest.spyOn(service, 'generateAccessToken').mockReturnValue(
-				newAccessToken,
+			jest.spyOn(service, 'generateAccessToken').mockImplementation(
+				() => newAccessToken,
 			);
+
 			// Mock generateRefreshToken (the service method, not the crypto part)
-			jest.spyOn(service, 'generateRefreshToken').mockResolvedValue(
-				newRefreshTokenString,
+			jest.spyOn(service, 'generateRefreshToken').mockImplementation(() =>
+				Promise.resolve(newRefreshTokenString),
 			);
 
 			mockQueryRunner.manager.update.mockResolvedValue({
@@ -399,25 +405,21 @@ describe('AuthService', () => {
 
 		it('should throw UnauthorizedException for invalid token format', async () => {
 			// Mock loggerService.error to do nothing
-			const originalLoggerError = loggerService.error;
-			loggerService.error = jest.fn();
+			const originalLoggerError = jest.fn();
+			loggerService.error = originalLoggerError;
 
-			try {
-				// Reset the spy for this specific test case to avoid interference
-				(service.validateRefreshToken as jest.Mock).mockRestore();
-				await expect(
-					service.handleRefresh(null as unknown as string),
-				).rejects.toThrow(UnauthorizedException);
-			} finally {
-				// Restore original loggerService.error
-				loggerService.error = originalLoggerError;
-			}
+			// Reset the spy for this specific test case to avoid interference
+			jest.spyOn(service, 'validateRefreshToken' as any).mockReset();
+			await expect(
+				service.handleRefresh(null as unknown as string),
+			).rejects.toThrow(UnauthorizedException);
 		});
 
 		it('should rollback transaction on error during handleRefresh', async () => {
-			(service.validateRefreshToken as jest.Mock).mockRejectedValue(
-				new UnauthorizedException('Validation failed'),
-			);
+			jest.spyOn(
+				service,
+				'validateRefreshToken' as any,
+			).mockRejectedValue(new UnauthorizedException('Validation failed'));
 			await expect(
 				service.handleRefresh(oldRefreshToken),
 			).rejects.toThrow(UnauthorizedException);
@@ -425,9 +427,10 @@ describe('AuthService', () => {
 		});
 
 		it('should re-throw UnauthorizedException from validateRefreshToken', async () => {
-			(service.validateRefreshToken as jest.Mock).mockRejectedValue(
-				new UnauthorizedException('Token invalid'),
-			);
+			jest.spyOn(
+				service,
+				'validateRefreshToken' as any,
+			).mockRejectedValue(new UnauthorizedException('Token invalid'));
 			await expect(
 				service.handleRefresh(oldRefreshToken),
 			).rejects.toThrow(UnauthorizedException);
@@ -468,8 +471,8 @@ describe('AuthService', () => {
 			expect(refreshTokenRepository.delete).toHaveBeenCalledWith({
 				expiresAt: LessThan(expect.any(Date)),
 			});
-			expect(loggerService.log).toHaveBeenCalledWith(
-				'Cleaned up 2 expired refresh tokens',
+			expect(loggerService.log as any).toHaveBeenCalledWith(
+				`Cleaned up 2 expired refresh tokens`,
 			);
 		});
 
@@ -477,7 +480,7 @@ describe('AuthService', () => {
 			const error = new Error('Cleanup failed');
 			refreshTokenRepository.delete.mockRejectedValue(error);
 			await service.cleanupExpiredTokens();
-			expect(loggerService.error).toHaveBeenCalledWith(
+			expect(loggerService.error as any).toHaveBeenCalledWith(
 				'Error cleaning up expired tokens',
 				error,
 			);

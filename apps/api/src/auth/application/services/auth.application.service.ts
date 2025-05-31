@@ -242,7 +242,10 @@ export class AuthApplicationService implements IAuthService {
 			if (error instanceof UnauthorizedException) {
 				throw error;
 			}
-			this.logger.error('Error validating refresh token', error.message);
+			this.logger.error(
+				'Error validating refresh token',
+				error instanceof Error ? error.message : 'Unknown error',
+			);
 			throw new InternalServerErrorException(
 				'Failed to validate refresh token',
 			);
@@ -274,7 +277,10 @@ export class AuthApplicationService implements IAuthService {
 			if (error instanceof UnauthorizedException) {
 				throw error;
 			}
-			this.logger.error('Error revoking refresh token', error.message);
+			this.logger.error(
+				'Error revoking refresh token',
+				error instanceof Error ? error.message : 'Unknown error',
+			);
 			throw new InternalServerErrorException(
 				'Failed to revoke refresh token',
 			);
@@ -342,7 +348,10 @@ export class AuthApplicationService implements IAuthService {
 				throw error;
 			}
 
-			this.logger.error('Error handling token refresh', error.message);
+			this.logger.error(
+				'Error handling token refresh',
+				error instanceof Error ? error.message : 'Unknown error',
+			);
 			throw new InternalServerErrorException('Failed to refresh tokens');
 		} finally {
 			await queryRunner.release();

@@ -7,7 +7,7 @@ import {
 import {
 	mockConfigService,
 	mockProfile,
-} from '../__mocks__/google.strategy.mocks';
+} from 'test/auth/strategies/mocks/google.strategy.mocks';
 
 describe('GoogleStrategy', () => {
 	let strategy: GoogleStrategy;

@@ -2,26 +2,30 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import {
-	mockUserAdmin,
-	mockUserEditor,
-	mockUserRegular,
-	mockUserGuest,
-	mockUserNoRoles,
-	mockUserMultipleRoles,
-} from '../../__mocks__/permissions.guard.mocks';
 import { User } from 'src/common/types/user.interface';
 import { PERMISSIONS_KEY } from 'src/auth/infrastructure/decorators/permissions.decorator';
 import { Permission } from 'src/auth/domain/enums/permission.enum';
 import { PermissionsGuard } from 'src/auth/infrastructure/guards/permissions.guard';
 import { rolePermissions } from 'src/auth/infrastructure/configs/role-permissions.config';
 import { Role } from 'src/auth/domain/enums/role.enum';
+import {
+	mockUserAdmin,
+	mockUserEditor,
+	mockUserMultipleRoles,
+	mockUserNoRoles,
+	mockUserRegular,
+	mockUserGuest,
+} from '../mocks/user-permissions.mocks';
 
 describe('PermissionsGuard', () => {
 	let guard: PermissionsGuard;
 	let mockReflector: jest.Mocked<Reflector>;
 
 	// Helper to create ExecutionContext and set up Reflector mock for it
+	interface RequestWithUser {
+		user?: User;
+	}
+
 	const createMockExecutionContext = (
 		user: User | undefined,
 		requiredPermissionsValue?: Permission[], // The value Reflector should return for PERMISSIONS_KEY
@@ -38,7 +42,7 @@ describe('PermissionsGuard', () => {
 
 		const mockContext = {
 			switchToHttp: () => ({
-				getRequest: () => ({ user }),
+				getRequest: () => ({ user }) as RequestWithUser,
 			}),
 			getHandler: jest.fn(() => 'handler'), // Dummy function for target
 			getClass: jest.fn(() => 'class'), // Dummy function for target

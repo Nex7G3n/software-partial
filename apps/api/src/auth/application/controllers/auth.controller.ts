@@ -314,9 +314,8 @@ export class AuthController {
 	// Métodos privados helper
 	private calculateUserPermissions(roles: string[]): Permission[] {
 		const userPermissions: Permission[] = roles.reduce((acc, role) => {
-			const permissionsForRole = (rolePermissions[
-				role as keyof typeof rolePermissions
-			] || []) as Permission[];
+			const permissionsForRole =
+				rolePermissions[role as keyof typeof rolePermissions] || [];
 			return [...new Set([...acc, ...permissionsForRole])];
 		}, [] as Permission[]);
 

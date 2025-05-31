@@ -40,7 +40,7 @@ describe('TasksApplicationService', () => {
 				status: TaskStatus.PENDING,
 			};
 			const userId = 'test-user-id';
-			const expectedTask: Task = {
+			const expectedTask = {
 				id: 'generated-id',
 				title: createTaskDto.title,
 				description: createTaskDto.description,
@@ -48,14 +48,14 @@ describe('TasksApplicationService', () => {
 				userId,
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			} as Task;
 
 			const createSpy = jest
 				.spyOn(tasksRepository, 'create')
-				.mockReturnValue(expectedTask as any);
+				.mockReturnValue(expectedTask);
 			const saveSpy = jest
 				.spyOn(tasksRepository, 'save')
-				.mockResolvedValue(expectedTask as any);
+				.mockResolvedValue(expectedTask);
 
 			const result = await service.create(createTaskDto, userId);
 
@@ -63,7 +63,7 @@ describe('TasksApplicationService', () => {
 				...createTaskDto,
 				userId,
 				status: createTaskDto.status || TaskStatus.PENDING,
-			} as any); // Added 'as any' to satisfy type checking for partial object
+			});
 			expect(saveSpy).toHaveBeenCalledWith(expectedTask);
 			expect(result).toEqual(expectedTask);
 		});

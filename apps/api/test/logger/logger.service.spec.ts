@@ -44,7 +44,19 @@ describe('LoggerService', () => {
 
 	describe('log', () => {
 		it('should call saveLog', () => {
-			const saveLogSpy = jest.spyOn(service as any, 'saveLog');
+			// Access the private method using type assertion
+			type LoggerServiceWithPrivate = typeof service & {
+				saveLog: (
+					level: string,
+					message: string | object,
+					context?: string,
+					data?: object,
+				) => Promise<void>;
+			};
+			const saveLogSpy = jest.spyOn(
+				service as LoggerServiceWithPrivate,
+				'saveLog',
+			);
 			const message = 'Test log message';
 			const context = 'TestContext';
 
@@ -56,7 +68,19 @@ describe('LoggerService', () => {
 
 	describe('error', () => {
 		it('should call saveLog', () => {
-			const saveLogSpy = jest.spyOn(service as any, 'saveLog');
+			// Access the private method using type assertion
+			type LoggerServiceWithPrivate = typeof service & {
+				saveLog: (
+					level: string,
+					message: string | object,
+					context?: string,
+					data?: object,
+				) => Promise<void>;
+			};
+			const saveLogSpy = jest.spyOn(
+				service as LoggerServiceWithPrivate,
+				'saveLog',
+			);
 			const message = 'Test error message';
 			const trace = 'TestTrace';
 			const context = 'TestContext';
@@ -75,7 +99,19 @@ describe('LoggerService', () => {
 
 	describe('warn', () => {
 		it('should call saveLog', () => {
-			const saveLogSpy = jest.spyOn(service as any, 'saveLog');
+			// Access the private method using type assertion
+			type LoggerServiceWithPrivate = typeof service & {
+				saveLog: (
+					level: string,
+					message: string | object,
+					context?: string,
+					data?: object,
+				) => Promise<void>;
+			};
+			const saveLogSpy = jest.spyOn(
+				service as LoggerServiceWithPrivate,
+				'saveLog',
+			);
 			const message = 'Test warn message';
 			const context = 'TestContext';
 
@@ -87,7 +123,19 @@ describe('LoggerService', () => {
 
 	describe('debug', () => {
 		it('should call saveLog', () => {
-			const saveLogSpy = jest.spyOn(service as any, 'saveLog');
+			// Access the private method using type assertion
+			type LoggerServiceWithPrivate = typeof service & {
+				saveLog: (
+					level: string,
+					message: string | object,
+					context?: string,
+					data?: object,
+				) => Promise<void>;
+			};
+			const saveLogSpy = jest.spyOn(
+				service as LoggerServiceWithPrivate,
+				'saveLog',
+			);
 			const message = 'Test debug message';
 			const context = 'TestContext';
 
@@ -99,7 +147,19 @@ describe('LoggerService', () => {
 
 	describe('verbose', () => {
 		it('should call saveLog', () => {
-			const saveLogSpy = jest.spyOn(service as any, 'saveLog');
+			// Access the private method using type assertion
+			type LoggerServiceWithPrivate = typeof service & {
+				saveLog: (
+					level: string,
+					message: string | object,
+					context?: string,
+					data?: object,
+				) => Promise<void>;
+			};
+			const saveLogSpy = jest.spyOn(
+				service as LoggerServiceWithPrivate,
+				'saveLog',
+			);
 			const message = 'Test verbose message';
 			const context = 'TestContext';
 
@@ -123,7 +183,16 @@ describe('LoggerService', () => {
 			mockLogRepository.create.mockReturnValue({});
 			mockLogRepository.save.mockResolvedValue({});
 
-			await (service as any).saveLog(level, message, context, data);
+			await (
+				service as LoggerService & {
+					saveLog: (
+						level: string,
+						message: string | object,
+						context?: string,
+						data?: object,
+					) => Promise<void>;
+				}
+			).saveLog(level, message, context, data);
 
 			expect(mockLogRepository.create).toHaveBeenCalledWith({
 				level,
@@ -141,7 +210,11 @@ describe('LoggerService', () => {
 			mockLogRepository.create.mockReturnValue({});
 			mockLogRepository.save.mockResolvedValue({});
 
-			await (service as any).saveLog(level, message, context);
+			await (service as LoggerServiceWithPrivate).saveLog(
+				level,
+				message,
+				context,
+			);
 
 			expect(mockLogRepository.create).toHaveBeenCalledWith({
 				level,
@@ -159,7 +232,12 @@ describe('LoggerService', () => {
 			mockLogRepository.create.mockReturnValue({});
 			mockLogRepository.save.mockResolvedValue({});
 
-			await (service as any).saveLog(level, message, undefined, data);
+			await (service as LoggerServiceWithPrivate).saveLog(
+				level,
+				message,
+				undefined,
+				data,
+			);
 
 			expect(mockLogRepository.create).toHaveBeenCalledWith({
 				level,
