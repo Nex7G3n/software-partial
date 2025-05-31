@@ -12,10 +12,12 @@ import {
 describe('GoogleStrategy', () => {
 	let strategy: GoogleStrategy;
 	let configService: Partial<ConfigService>;
+	let doneMock: jest.Mock;
 
 	beforeEach(() => {
 		configService = mockConfigService;
 		strategy = new GoogleStrategy(configService as ConfigService);
+		doneMock = jest.fn();
 	});
 
 	describe('constructor', () => {
@@ -25,33 +27,48 @@ describe('GoogleStrategy', () => {
 	});
 
 	describe('validate', () => {
-		it('should return a GoogleUser object when profile contains emails', () => {
-			const result: GoogleUser = strategy.validate(
+		// Función auxiliar para reducir la duplicación
+		const callValidate = (profile: Profile) => {
+			return strategy.validate(
 				'access-token',
 				'refresh-token',
-				mockProfile,
+				profile,
+				doneMock,
 			);
+		};
+
+		it('should return a GoogleUser object and call done with the user when profile contains emails', () => {
+			const result: GoogleUser = callValidate(mockProfile);
 
 			expect(result).toEqual({
 				googleId: '12345',
 				email: 'john.doe@example.com',
 				name: 'John Doe',
 			});
+			expect(doneMock).toHaveBeenCalledWith(null, result);
 		});
+
+		it('should throw an error if profile is undefined or null', () => {
+			expect(() => callValidate(undefined as unknown as Profile)).toThrow(
+				'Google profile is undefined or null',
+			);
+			expect(doneMock).not.toHaveBeenCalled();
+		});
+
+		// Función auxiliar para pruebas de error de email
+		const expectEmailError = (profile: Profile) => {
+			expect(() => callValidate(profile)).toThrow(
+				'No email found in Google profile',
+			);
+			expect(doneMock).not.toHaveBeenCalled();
+		};
 
 		it('should throw an error if profile has no emails', () => {
 			const invalidProfile: Profile = {
 				...mockProfile,
 				emails: [],
 			};
-
-			expect(() =>
-				strategy.validate(
-					'access-token',
-					'refresh-token',
-					invalidProfile,
-				),
-			).toThrow('No email found in Google profile');
+			expectEmailError(invalidProfile);
 		});
 
 		it('should throw an error if emails array is undefined', () => {
@@ -59,14 +76,7 @@ describe('GoogleStrategy', () => {
 				...mockProfile,
 				emails: undefined,
 			};
-
-			expect(() =>
-				strategy.validate(
-					'access-token',
-					'refresh-token',
-					invalidProfile,
-				),
-			).toThrow('No email found in Google profile');
+			expectEmailError(invalidProfile);
 		});
 
 		it('should handle missing displayName by returning empty string for name', () => {
@@ -75,15 +85,12 @@ describe('GoogleStrategy', () => {
 				displayName: undefined,
 			};
 
-			const result: GoogleUser = strategy.validate(
-				'access-token',
-				'refresh-token',
-				profileNoName,
-			);
+			const result: GoogleUser = callValidate(profileNoName);
 
 			expect(result.name).toBe('');
 			expect(result.googleId).toBe('12345');
 			expect(result.email).toBe('john.doe@example.com');
+			expect(doneMock).toHaveBeenCalledWith(null, result);
 		});
 	});
 });

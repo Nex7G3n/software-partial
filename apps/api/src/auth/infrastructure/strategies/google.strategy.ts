@@ -3,11 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'passport';
 import { Strategy } from 'passport-google-oauth20';
-import { Request } from 'express';
+// import { Request } from 'express'; // No es necesario si passReqToCallback es false
 
 interface GoogleProfile extends Profile {
 	id: string;
-	displayName: string;
 	emails: { value: string }[];
 }
 
@@ -25,15 +24,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 			clientSecret: config.get('GOOGLE_CLIENT_SECRET')!,
 			callbackURL: config.get('GOOGLE_CALLBACK_URL')!,
 			scope: ['email', 'profile'],
-			passReqToCallback: true,
+			passReqToCallback: false, // Cambiado a false
 		});
 	}
 
 	validate(
-		req: Request,
 		accessToken: string,
 		refreshToken: string,
 		profile: Profile,
+		done: (err?: Error | null, user?: any, info?: any) => void,
 	): GoogleUser {
 		console.log('Google Profile:', profile);
 		if (!profile) {
@@ -50,10 +49,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 			throw new Error('No email found in Google profile');
 		}
 
-		return {
+		const user: GoogleUser = {
 			googleId: googleProfile.id,
 			email: googleProfile.emails[0].value,
 			name: googleProfile.displayName || '',
 		};
+
+		// Llamar a done con el usuario para que Passport lo maneje
+		done(null, user);
+		return user; // Retornar el usuario para el tipo de retorno de la promesa
 	}
 }

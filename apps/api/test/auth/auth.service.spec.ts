@@ -187,11 +187,11 @@ describe('AuthService', () => {
 			const originalLoggerError = jest.fn();
 			loggerService.error = originalLoggerError;
 
-			expect(() => {
-				return service.generateAccessToken({
+			expect(() =>
+				service.generateAccessToken({
 					id: null,
-				} as unknown as UserEntity);
-			}).toThrow(UnauthorizedException);
+				} as unknown as UserEntity),
+			).toThrow(UnauthorizedException);
 		});
 	});
 
@@ -363,10 +363,9 @@ describe('AuthService', () => {
 
 		beforeEach(() => {
 			// Mock validateRefreshToken to succeed for this test block
-			jest.spyOn(
-				service,
-				'validateRefreshToken' as any,
-			).mockImplementation(() => Promise.resolve(mockUser));
+			jest.spyOn(service, 'validateRefreshToken').mockImplementation(
+				() => Promise.resolve(mockUser),
+			);
 
 			// Mock generateAccessToken
 			jest.spyOn(service, 'generateAccessToken').mockImplementation(
@@ -374,8 +373,8 @@ describe('AuthService', () => {
 			);
 
 			// Mock generateRefreshToken (the service method, not the crypto part)
-			jest.spyOn(service, 'generateRefreshToken').mockImplementation(() =>
-				Promise.resolve(newRefreshTokenString),
+			jest.spyOn(service, 'generateRefreshToken').mockImplementation(
+				() => Promise.resolve(newRefreshTokenString),
 			);
 
 			mockQueryRunner.manager.update.mockResolvedValue({
@@ -409,17 +408,16 @@ describe('AuthService', () => {
 			loggerService.error = originalLoggerError;
 
 			// Reset the spy for this specific test case to avoid interference
-			jest.spyOn(service, 'validateRefreshToken' as any).mockReset();
+			jest.spyOn(service, 'validateRefreshToken').mockReset();
 			await expect(
 				service.handleRefresh(null as unknown as string),
 			).rejects.toThrow(UnauthorizedException);
 		});
 
 		it('should rollback transaction on error during handleRefresh', async () => {
-			jest.spyOn(
-				service,
-				'validateRefreshToken' as any,
-			).mockRejectedValue(new UnauthorizedException('Validation failed'));
+			jest.spyOn(service, 'validateRefreshToken').mockRejectedValue(
+				new UnauthorizedException('Validation failed'),
+			);
 			await expect(
 				service.handleRefresh(oldRefreshToken),
 			).rejects.toThrow(UnauthorizedException);
@@ -427,10 +425,9 @@ describe('AuthService', () => {
 		});
 
 		it('should re-throw UnauthorizedException from validateRefreshToken', async () => {
-			jest.spyOn(
-				service,
-				'validateRefreshToken' as any,
-			).mockRejectedValue(new UnauthorizedException('Token invalid'));
+			jest.spyOn(service, 'validateRefreshToken').mockRejectedValue(
+				new UnauthorizedException('Token invalid'),
+			);
 			await expect(
 				service.handleRefresh(oldRefreshToken),
 			).rejects.toThrow(UnauthorizedException);
@@ -471,7 +468,7 @@ describe('AuthService', () => {
 			expect(refreshTokenRepository.delete).toHaveBeenCalledWith({
 				expiresAt: LessThan(expect.any(Date)),
 			});
-			expect(loggerService.log as any).toHaveBeenCalledWith(
+			expect(loggerService.log).toHaveBeenCalledWith(
 				`Cleaned up 2 expired refresh tokens`,
 			);
 		});
@@ -480,9 +477,9 @@ describe('AuthService', () => {
 			const error = new Error('Cleanup failed');
 			refreshTokenRepository.delete.mockRejectedValue(error);
 			await service.cleanupExpiredTokens();
-			expect(loggerService.error as any).toHaveBeenCalledWith(
+			expect(loggerService.error).toHaveBeenCalledWith(
 				'Error cleaning up expired tokens',
-				error,
+				error.message, // Esperar el mensaje de error, no el objeto Error completo
 			);
 		});
 	});
