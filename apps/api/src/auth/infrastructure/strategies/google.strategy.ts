@@ -7,7 +7,6 @@ import { Request } from 'express';
 
 interface GoogleProfile extends Profile {
 	id: string;
-	displayName: string;
 	emails: { value: string }[];
 }
 
@@ -29,12 +28,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 		});
 	}
 
-	validate(
-		req: Request,
-		accessToken: string,
-		refreshToken: string,
-		profile: Profile,
-	): GoogleUser {
+	validate(...args: any[]): GoogleUser {
+		// Extraer los argumentos de forma flexible
+		const profile: Profile = args[args.length - 1];
+		const refreshToken: string = args[args.length - 2];
+		const accessToken: string = args[args.length - 3];
+		const req: Request | undefined = args.length === 4 ? args[0] : undefined;
+
 		console.log('Google Profile:', profile);
 		if (!profile) {
 			throw new Error('Google profile is undefined or null');
