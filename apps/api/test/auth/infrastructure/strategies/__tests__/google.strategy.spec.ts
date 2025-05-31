@@ -12,12 +12,12 @@ import {
 describe('GoogleStrategy', () => {
 	let strategy: GoogleStrategy;
 	let configService: Partial<ConfigService>;
-	let doneMock: jest.Mock; // Añadido doneMock
+	let doneMock: jest.Mock;
 
 	beforeEach(() => {
 		configService = mockConfigService;
 		strategy = new GoogleStrategy(configService as ConfigService);
-		doneMock = jest.fn(); // Inicializado doneMock
+		doneMock = jest.fn();
 	});
 
 	describe('constructor', () => {
@@ -27,32 +27,32 @@ describe('GoogleStrategy', () => {
 	});
 
 	describe('validate', () => {
-		it('should return a GoogleUser object and call done with the user when profile contains emails', () => {
-			const result: GoogleUser = strategy.validate(
+		// Función auxiliar para reducir la duplicación
+		const callValidate = (profile: Profile) => {
+			return strategy.validate(
 				'access-token',
 				'refresh-token',
-				mockProfile,
-				doneMock, // Pasado doneMock
+				profile,
+				doneMock,
 			);
+		};
+
+		it('should return a GoogleUser object and call done with the user when profile contains emails', () => {
+			const result: GoogleUser = callValidate(mockProfile);
 
 			expect(result).toEqual({
 				googleId: '12345',
 				email: 'john.doe@example.com',
 				name: 'John Doe',
 			});
-			expect(doneMock).toHaveBeenCalledWith(null, result); // Verificado doneMock
+			expect(doneMock).toHaveBeenCalledWith(null, result);
 		});
 
 		it('should throw an error if profile is undefined or null', () => {
-			expect(() =>
-				strategy.validate(
-					'access-token',
-					'refresh-token',
-					undefined as unknown as Profile, // Simular perfil indefinido
-					doneMock, // Pasado doneMock
-				),
-			).toThrow('Google profile is undefined or null');
-			expect(doneMock).not.toHaveBeenCalled(); // done no debe ser llamado en caso de error
+			expect(() => callValidate(undefined as unknown as Profile)).toThrow(
+				'Google profile is undefined or null',
+			);
+			expect(doneMock).not.toHaveBeenCalled();
 		});
 
 		it('should throw an error if profile has no emails', () => {
@@ -61,14 +61,9 @@ describe('GoogleStrategy', () => {
 				emails: [],
 			};
 
-			expect(() =>
-				strategy.validate(
-					'access-token',
-					'refresh-token',
-					invalidProfile,
-					doneMock, // Pasado doneMock
-				),
-			).toThrow('No email found in Google profile');
+			expect(() => callValidate(invalidProfile)).toThrow(
+				'No email found in Google profile',
+			);
 			expect(doneMock).not.toHaveBeenCalled();
 		});
 
@@ -78,14 +73,9 @@ describe('GoogleStrategy', () => {
 				emails: undefined,
 			};
 
-			expect(() =>
-				strategy.validate(
-					'access-token',
-					'refresh-token',
-					invalidProfile,
-					doneMock, // Pasado doneMock
-				),
-			).toThrow('No email found in Google profile');
+			expect(() => callValidate(invalidProfile)).toThrow(
+				'No email found in Google profile',
+			);
 			expect(doneMock).not.toHaveBeenCalled();
 		});
 
@@ -95,17 +85,12 @@ describe('GoogleStrategy', () => {
 				displayName: undefined,
 			};
 
-			const result: GoogleUser = strategy.validate(
-				'access-token',
-				'refresh-token',
-				profileNoName,
-				doneMock, // Pasado doneMock
-			);
+			const result: GoogleUser = callValidate(profileNoName);
 
 			expect(result.name).toBe('');
 			expect(result.googleId).toBe('12345');
 			expect(result.email).toBe('john.doe@example.com');
-			expect(doneMock).toHaveBeenCalledWith(null, result); // Verificado doneMock
+			expect(doneMock).toHaveBeenCalledWith(null, result);
 		});
 	});
 });
