@@ -55,16 +55,20 @@ describe('GoogleStrategy', () => {
 			expect(doneMock).not.toHaveBeenCalled();
 		});
 
+		// Función auxiliar para pruebas de error de email
+		const expectEmailError = (profile: Profile) => {
+			expect(() => callValidate(profile)).toThrow(
+				'No email found in Google profile',
+			);
+			expect(doneMock).not.toHaveBeenCalled();
+		};
+
 		it('should throw an error if profile has no emails', () => {
 			const invalidProfile: Profile = {
 				...mockProfile,
 				emails: [],
 			};
-
-			expect(() => callValidate(invalidProfile)).toThrow(
-				'No email found in Google profile',
-			);
-			expect(doneMock).not.toHaveBeenCalled();
+			expectEmailError(invalidProfile);
 		});
 
 		it('should throw an error if emails array is undefined', () => {
@@ -72,11 +76,7 @@ describe('GoogleStrategy', () => {
 				...mockProfile,
 				emails: undefined,
 			};
-
-			expect(() => callValidate(invalidProfile)).toThrow(
-				'No email found in Google profile',
-			);
-			expect(doneMock).not.toHaveBeenCalled();
+			expectEmailError(invalidProfile);
 		});
 
 		it('should handle missing displayName by returning empty string for name', () => {
