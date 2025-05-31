@@ -18,6 +18,6 @@
 		"noFallthroughCasesInSwitch": false,
 		"isolatedModules": true,
 		"strictPropertyInitialization": false,
-		"types": ["jest", "node"]
+		"types": ["node", "jest"]
 	}
 }

@@ -1,16 +1,16 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES2021",
-    "outDir": "./dist",
-    "rootDir": "./",
-    "types": ["jest", "node"],
-    "paths": {
-      "src/*": ["src/*"],
-      "test/*": ["test/*"]
-    }
-  },
-  "include": ["**/*.(spec|d).ts", "**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"module": "CommonJS",
+		"target": "ES2021",
+		"outDir": "./dist",
+		"rootDir": "./",
+		"types": ["jest", "node"],
+		"paths": {
+			"src/*": ["src/*"],
+			"test/*": ["test/*"]
+		}
+	},
+	"include": ["**/*.(spec|d).ts", "**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }
