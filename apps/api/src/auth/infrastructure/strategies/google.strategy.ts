@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Profile } from 'passport';
 import { Strategy } from 'passport-google-oauth20';
+import { Request } from 'express';
 
 interface GoogleProfile extends Profile {
 	id: string;
@@ -29,10 +30,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 	}
 
 	validate(
+		req: Request,
 		accessToken: string,
 		refreshToken: string,
 		profile: Profile,
 	): GoogleUser {
+		console.log('Google Profile:', profile);
+		if (!profile) {
+			throw new Error('Google profile is undefined or null');
+		}
+
 		const googleProfile = profile as GoogleProfile;
 
 		if (
