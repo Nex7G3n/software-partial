@@ -4,7 +4,10 @@ import {
 	GoogleStrategy,
 	GoogleUser,
 } from 'src/auth/infrastructure/strategies/google.strategy';
-import { mockConfigService, mockProfile } from '../__mocks__/google.strategy.mocks';
+import {
+	mockConfigService,
+	mockProfile,
+} from '../__mocks__/google.strategy.mocks';
 
 describe('GoogleStrategy', () => {
 	let strategy: GoogleStrategy;

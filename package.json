@@ -31,8 +31,7 @@
 		"format:check": "prettier --check .",
 		"clean": "concurrently \"yarn workspace client clean\" \"yarn workspace api clean\"",
 		"clean:node_modules": "rm -rf node_modules apps/*/node_modules",
-		"typecheck": "concurrently \"yarn workspace client typecheck\" \"yarn workspace api typecheck\"",
-		"prepare": "husky install || true"
+		"typecheck": "concurrently \"yarn workspace client typecheck\" \"yarn workspace api typecheck\""
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.27.0",
@@ -40,7 +39,6 @@
 		"eslint": "^9.27.0",
 		"eslint-plugin-prettier": "^5.4.0",
 		"globals": "^16.2.0",
-		"husky": "^9.0.11",
 		"lint-staged": "^15.2.0",
 		"prettier": "^3.5.3",
 		"typescript": "^5.8.3",
