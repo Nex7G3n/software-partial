@@ -145,18 +145,22 @@ const Dashboard = () => {
 	};
 
 	const timelineChartData = {
-		labels: metrics.timeline.map((item: { date: string; count: number }) => {
-			// Formato más legible para fechas
-			const date = new Date(item.date);
-			return date.toLocaleDateString('es-ES', {
-				day: '2-digit',
-				month: '2-digit',
-			});
-		}),
+		labels: (metrics.timeline || []).map(
+			(item: { date: string; count: number }) => {
+				// Formato más legible para fechas
+				const date = new Date(item.date);
+				return date.toLocaleDateString('es-ES', {
+					day: '2-digit',
+					month: '2-digit',
+				});
+			},
+		),
 		datasets: [
 			{
 				label: 'Tareas Creadas',
-				data: metrics.timeline.map((item: { date: string; count: number }) => item.count),
+				data: (metrics.timeline || []).map(
+					(item: { date: string; count: number }) => item.count,
+				),
 				borderColor: chartColors.green,
 				backgroundColor: chartColors.green.replace('0.8', '0.2'),
 				tension: 0.3,
@@ -235,9 +239,8 @@ const Dashboard = () => {
 
 	// Calcular porcentajes para mostrar información más valiosa
 	const completedTasksCount =
-		metrics.tasksByStatus.find(
-			(s) => s.status === TaskStatus.COMPLETED,
-		)?.count || 0;
+		metrics.tasksByStatus.find((s) => s.status === TaskStatus.COMPLETED)
+			?.count || 0;
 	const pendingTasksCount =
 		metrics.tasksByStatus.find((s) => s.status === TaskStatus.PENDING)
 			?.count || 0;
@@ -300,7 +303,7 @@ const Dashboard = () => {
 						Actividad Reciente
 					</h2>
 					<p className="text-2xl font-bold mt-1">
-						{metrics.timeline.length > 0
+						{(metrics.timeline?.length ?? 0) > 0
 							? metrics.timeline[metrics.timeline.length - 1]
 									.count
 							: 0}
@@ -331,7 +334,9 @@ const Dashboard = () => {
 											label: function (context) {
 												const label =
 													context.label || '';
-												const value = context.raw as number || 0; // Explicitly cast to number
+												const value =
+													(context.raw as number) ||
+													0; // Explicitly cast to number
 												const total =
 													context.dataset.data.reduce(
 														(a, b) => a + b,
@@ -371,7 +376,10 @@ const Dashboard = () => {
 						className="h-64"
 						aria-describedby="timeline-chart-title"
 					>
-						<Line data={timelineChartData} options={lineOptions as ChartOptions<'line'>} />
+						<Line
+							data={timelineChartData}
+							options={lineOptions as ChartOptions<'line'>}
+						/>
 					</div>
 					<div className="sr-only" role="status" aria-live="polite">
 						Gráfico de tendencia de creación de tareas a lo largo
@@ -392,19 +400,23 @@ const Dashboard = () => {
 					<div className="h-80" aria-describedby="user-chart-title">
 						<Bar
 							data={userChartData}
-							options={{
-								...commonOptions,
-								indexAxis:
-									metrics.tasksByUser?.length > 8 ? 'y' : 'x',
-								scales: {
-									y: {
-										beginAtZero: true,
-										ticks: {
-											precision: 0,
+							options={
+								{
+									...commonOptions,
+									indexAxis:
+										metrics.tasksByUser?.length > 8
+											? 'y'
+											: 'x',
+									scales: {
+										y: {
+											beginAtZero: true,
+											ticks: {
+												precision: 0,
+											},
 										},
 									},
-								},
-							} as ChartOptions<'bar'>}
+								} as ChartOptions<'bar'>
+							}
 						/>
 					</div>
 					<div className="sr-only" role="status" aria-live="polite">

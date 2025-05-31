@@ -1,4 +1,5 @@
-export const getDueStatus = (dueDateStr: string) => { // Add type annotation
+export const getDueStatus = (dueDateStr: string) => {
+	// Add type annotation
 	if (!dueDateStr) return null;
 
 	const dueDate = new Date(dueDateStr);

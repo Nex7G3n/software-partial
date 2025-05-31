@@ -1,38 +1,38 @@
 name: CI Workflow
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+    build-and-test:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'yarn'
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20'
+                  cache: 'yarn'
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
 
-      - name: Lint API
-        run: npx eslint "{src,apps,libs,test}/**/*.ts" --fix
-        working-directory: apps/api
+            - name: Lint API
+              run: npx eslint "{src,apps,libs,test}/**/*.ts" --fix
+              working-directory: apps/api
 
-      - name: Test API
-        run: npx jest --coverage
-        working-directory: apps/api
+            - name: Test API
+              run: npx jest --coverage
+              working-directory: apps/api
 
-      - name: Lint Client
-        run: npx eslint .
-        working-directory: apps/client
+            - name: Lint Client
+              run: npx eslint .
+              working-directory: apps/client

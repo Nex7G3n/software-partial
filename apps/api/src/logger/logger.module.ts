@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LoggerService } from './logger.service';
-import { LogEntity } from './entities/log.entity';
+import { LoggerService } from './infrastructure/services/logger.service';
+import { LogEntity } from './infrastructure/persistence/entities/log.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogEntity])],
-  providers: [LoggerService],
-  exports: [LoggerService],
+	imports: [TypeOrmModule.forFeature([LogEntity])],
+	providers: [LoggerService],
+	exports: [LoggerService],
 })
 export class LoggerModule {}

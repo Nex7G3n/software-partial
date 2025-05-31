@@ -1,4 +1,5 @@
-export const getPriorityColor = (priority: string | undefined) => { // Add type annotation
+export const getPriorityColor = (priority: string | undefined) => {
+	// Add type annotation
 	switch (priority?.toLowerCase()) {
 		case 'alta':
 			return 'bg-red-100 text-red-800';

@@ -56,17 +56,21 @@ export function TaskList({
 	if (!isDraggable) {
 		return (
 			<div className="space-y-4">
-				{ordered.map((task) => ( // Removed 'i'
-					<TaskSortableItem
-						key={task.id}
-						task={task}
-						// index={i} // Removed: no longer needed
-						canEdit={canEdit}
-						canDelete={canDelete}
-						canView={canView}
-						isDraggable={false}
-					/>
-				))}
+				{ordered.map(
+					(
+						task, // Removed 'i'
+					) => (
+						<TaskSortableItem
+							key={task.id}
+							task={task}
+							// index={i} // Removed: no longer needed
+							canEdit={canEdit}
+							canDelete={canDelete}
+							canView={canView}
+							isDraggable={false}
+						/>
+					),
+				)}
 			</div>
 		);
 	}
@@ -83,17 +87,21 @@ export function TaskList({
 				strategy={verticalListSortingStrategy}
 			>
 				<div className="space-y-4">
-					{ordered.map((task) => ( // Removed 'i'
-						<TaskSortableItem
-							key={task.id}
-							task={task}
-							// index={i} // Removed: no longer needed
-							canEdit={canEdit}
-							canDelete={canDelete}
-							canView={canView}
-							isDraggable={true}
-						/>
-					))}
+					{ordered.map(
+						(
+							task, // Removed 'i'
+						) => (
+							<TaskSortableItem
+								key={task.id}
+								task={task}
+								// index={i} // Removed: no longer needed
+								canEdit={canEdit}
+								canDelete={canDelete}
+								canView={canView}
+								isDraggable={true}
+							/>
+						),
+					)}
 				</div>
 			</SortableContext>
 		</DndContext>

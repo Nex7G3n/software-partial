@@ -60,7 +60,9 @@ export const useUserStore = create<UserState>()(
 					} else {
 						console.error('An unknown error occurred', error);
 						set({ token: null, user: null });
-						toast.error('An unknown error occurred. Redirigiendo...');
+						toast.error(
+							'An unknown error occurred. Redirigiendo...',
+						);
 						navigate('/');
 					}
 				}
@@ -93,7 +95,9 @@ export const useUserStore = create<UserState>()(
 					} else {
 						console.error('An unknown error occurred:', error);
 						set({ user: null, loading: false });
-						toast.error('An unknown error occurred. Redirigiendo...');
+						toast.error(
+							'An unknown error occurred. Redirigiendo...',
+						);
 						navigate('/');
 					}
 				}

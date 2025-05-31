@@ -7,7 +7,11 @@ import {
 import { Button } from '../../components/Button';
 import { useDialogStore } from '../../../stores/dialog.store';
 
-export function ChangeStateDialog({ onChangeState }: any) {
+interface ChangeStateDialogProps {
+	onChangeState: () => void;
+}
+
+export function ChangeStateDialog({ onChangeState }: ChangeStateDialogProps) {
 	const { isOpen, closeDialog } = useDialogStore();
 	return (
 		<Dialog

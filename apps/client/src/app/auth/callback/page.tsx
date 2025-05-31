@@ -1,4 +1,3 @@
-// src/pages/auth/CallbackPage.tsx
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { loginCallback } from '../../../stores/user.store';
@@ -14,7 +13,7 @@ export default function CallbackPage() {
 		} else {
 			loginCallback(navigate);
 		}
-	}, [error, navigate, loginCallback]);
+	}, [error, navigate]);
 
 	return (
 		<div>
